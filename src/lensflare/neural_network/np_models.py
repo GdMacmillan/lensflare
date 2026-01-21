@@ -1,5 +1,11 @@
+import matplotlib.pyplot as plt
 import numpy as np
-from ..funcs import *
+
+from ..funcs import (
+    initialize_parameters,
+    optimize,
+    predict,
+)
 
 class NpNNClassifier(object):
     """Dense Neural Network binary classifier.
