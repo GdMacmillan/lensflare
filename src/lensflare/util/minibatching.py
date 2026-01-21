@@ -35,8 +35,8 @@ def random_mini_batches(X, Y, mini_batch_size=64, seed=None):
 
     # Handling the end case (last mini-batch < mini_batch_size)
     if m % mini_batch_size != 0:
-        mini_batch_X = shuffled_X[:, (num_complete_minibatches * 64) - 1: -1]
-        mini_batch_Y = shuffled_Y[:, (num_complete_minibatches * 64) - 1: -1]
+        mini_batch_X = shuffled_X[:, num_complete_minibatches * mini_batch_size:]
+        mini_batch_Y = shuffled_Y[:, num_complete_minibatches * mini_batch_size:]
         mini_batch = (mini_batch_X, mini_batch_Y)
         mini_batches.append(mini_batch)
 
