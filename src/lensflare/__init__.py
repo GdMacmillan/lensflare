@@ -1,27 +1,48 @@
 # -*- encoding: utf-8 -*-
-import os
+"""LensFlare - Educational deep learning library.
+
+This library provides educational implementations of neural networks using
+both NumPy and TensorFlow 2 with the low-level GradientTape API.
+
+On Apple Silicon Macs, install tensorflow-metal for GPU acceleration:
+    pip install tensorflow-metal
+"""
+
 import sys
 
-from lensflare.util import dependencies
-from lensflare.__version__ import __version__
+from .__version__ import __version__
 
-__MANDATORY_PACKAGES__ = '''
-numpy>=1.9
-tensorflow>=1.1
-matplotlib>=2.1
-'''
-
-dependencies.verify_packages(__MANDATORY_PACKAGES__)
-
-if os.name != 'posix':
+# Check Python version
+if sys.version_info < (3, 10):
     raise ValueError(
-        'Detected unsupported operating system: %s. Please check '
-        'the compability information of lensflares' %
-        sys.platform
+        f'Unsupported Python version {sys.version_info.major}.{sys.version_info.minor}. '
+        'LensFlare requires Python 3.10 or higher.'
     )
 
-if sys.version_info < (3, 5):
-    raise ValueError(
-        'Unsupported python version %s found. Auto-sklearn requires Python '
-        '3.5 or higher.' % sys.version_info
-    )
+# Public API
+from .classification import TfNNClassifier, NpNNClassifier
+from .util import load_moons_dataset, random_mini_batches
+from .neural_network import (
+    check_gpu_available,
+    configure_gpu_memory_growth,
+    BinaryClassifierNN,
+    DenseLayer,
+)
+from .funcs import plot_decision_boundary
+
+__all__ = [
+    '__version__',
+    # Classifiers
+    'TfNNClassifier',
+    'NpNNClassifier',
+    # Utilities
+    'load_moons_dataset',
+    'random_mini_batches',
+    'plot_decision_boundary',
+    # GPU utilities
+    'check_gpu_available',
+    'configure_gpu_memory_growth',
+    # Model building blocks
+    'BinaryClassifierNN',
+    'DenseLayer',
+]
