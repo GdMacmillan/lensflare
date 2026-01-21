@@ -107,13 +107,13 @@ def initialize_parameters(layer_dims, seed):
     if seed:
         np.random.seed(seed)
     parameters = {}
-    L = len(layers_dims) - 1 # integer representing the number of layers
+    L = len(layer_dims) - 1 # integer representing the number of layers
 
     for l in range(1, L + 1):
-        parameters['W' + str(l)] = np.random.randn(layers_dims[l],
-                                                   layers_dims[l - 1]) *\
-                                       np.sqrt(2 / layers_dims[l - 1])
-        parameters['b' + str(l)] = np.zeros((layers_dims[l], 1))
+        parameters['W' + str(l)] = np.random.randn(layer_dims[l],
+                                                   layer_dims[l - 1]) *\
+                                       np.sqrt(2 / layer_dims[l - 1])
+        parameters['b' + str(l)] = np.zeros((layer_dims[l], 1))
 
     return parameters
 
@@ -564,7 +564,7 @@ def predict(X, Y, parameters, train=True):
     """
 
     m = X.shape[1]
-    preds = np.zeros((1,m), dtype = np.int)
+    preds = np.zeros((1,m), dtype=int)
 
     # Forward propagation
     keep_prob=None
