@@ -1,64 +1,97 @@
 
 # LensFlare
 
-LensFlare is an example package I created to help myself and others better understand neural networks. A lot of the code is based off work that I did in the [Coursera deeplearning.ai course](https://www.coursera.org/specializations/deep-learning)
+LensFlare is an educational deep learning library for understanding neural networks. The code is based on work from the [Coursera deeplearning.ai course](https://www.coursera.org/specializations/deep-learning).
 
-An example work flow is shown below:
+## Features
 
+- **TensorFlow 2 with GradientTape** - Low-level API for explicit gradient computation
+- **Metal GPU acceleration** on Apple Silicon Macs
+- **sklearn-style interface** with `fit()`, `predict()`, `transform()`
+- **Pure NumPy implementation** for maximum educational transparency
 
-```python
-import tensorflow as tf
-from lensflare.classification import TfNNClassifier
-from lensflare.util import load_moons_dataset
+## Installation
+
+```bash
+pip install -e .
+
+# For Apple Silicon GPU acceleration
+pip install -e ".[metal]"
 ```
 
+## Quick Start
 
 ```python
-X_train, y_train = load_moons_dataset()
-```
+from lensflare import TfNNClassifier, load_moons_dataset, check_gpu_available, plot_decision_boundary
 
+# Check for Metal GPU (Apple Silicon)
+check_gpu_available()
+
+# Load the moons dataset
+X_train, y_train = load_moons_dataset(n_samples=300, noise=0.2, seed=42, plot=True)
+```
 
 ![png](readme_files/plot_data.png)
 
-
-
 ```python
-tf.reset_default_graph()
+# Define network architecture: 2 inputs -> 64 -> 32 -> 16 -> 1 output
+layers_dims = [X_train.shape[0], 64, 32, 16, 1]
 
-# layer_dims contains neural network structure parameters
-layers_dims=[X_train.shape[0], 200, 80, 10, 1]
-clf = TfNNClassifier(layers_dims=layers_dims,
-                  optimizer="adam",
-                  lambd=.05,
-                  keep_prob=0.7,
-                  num_epochs=5000)
-clf.fit(X_train, y_train, seed=3)
+# Create classifier with Adam optimizer
+clf = TfNNClassifier(
+    layers_dims=layers_dims,
+    optimizer="adam",
+    alpha=0.01,
+    lambd=0.01,
+    keep_prob=0.9,
+    num_epochs=2000,
+    print_cost=True
+)
+
+# Train the model
+clf.fit(X_train, y_train, seed=1)
+
+# Get predictions
 y_pred_train = clf.transform(X_train, y_train)
 ```
 
-    Cost after epoch 0: 1.036825
-    Cost after epoch 1000: 0.108737
-    Cost after epoch 2000: 0.104837
-    Cost after epoch 3000: 0.106805
-    Cost after epoch 4000: 0.105311
-    INFO:tensorflow:Restoring parameters from results/model
-    Training Accuracy: 0.983333333333
-
-
+    Cost after epoch 0: 0.693147
+    Cost after epoch 100: 0.341821
+    ...
+    Training Accuracy: 98.00%
 
 ```python
-from lensflare.funcs.tf_funcs import plot_decision_boundary, predict_dec
 # Plot decision boundary
-
-predictions, X, dropout_var, sess = predict_dec()
-model = lambda X_train: sess.run([predictions], feed_dict={X:X_train, dropout_var: 1.0});
-
-plot_decision_boundary(model, X_train, y_train)
-sess.close()
+plot_decision_boundary(clf, X_train, y_train)
 ```
 
-    INFO:tensorflow:Restoring parameters from results/model
-
-
-
 ![png](readme_files/decision_boundary.png)
+
+## NumPy Implementation
+
+For even more educational transparency, use the pure NumPy classifier:
+
+```python
+from lensflare import NpNNClassifier
+
+np_clf = NpNNClassifier(
+    layers_dims=[X_train.shape[0], 32, 16, 1],
+    optimizer="adam",
+    alpha=0.01,
+    lambd=0.01,
+    num_epochs=2000,
+    print_cost=True
+)
+
+np_clf.fit(X_train, y_train, seed=1)
+```
+
+## Requirements
+
+- Python >= 3.12
+- TensorFlow >= 2.15, <= 2.18.1
+- NumPy, Matplotlib, scikit-learn
+
+## License
+
+MIT
