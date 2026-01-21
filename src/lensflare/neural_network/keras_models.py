@@ -167,6 +167,20 @@ class BinaryClassifierNN(tf.keras.Model):
             name='output'
         )
 
+    def build(self, input_shape):
+        """Build the model by building all layers."""
+        # Build hidden layers
+        shape = input_shape
+        for i, layer in enumerate(self.hidden_layers):
+            layer.build(shape)
+            shape = (shape[0], layer.units)
+            if self.dropout_layers[i] is not None:
+                self.dropout_layers[i].build(shape)
+
+        # Build output layer
+        self.output_layer.build(shape)
+        super().build(input_shape)
+
     def call(self, inputs, training=False):
         """Forward propagation through the network.
 
