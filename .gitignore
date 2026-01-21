@@ -1,18 +1,37 @@
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+
+# Project specific
 *.cert
 *.key
 *.zip
 config.yml
 instance_data.json
-.DS_Store
-results
-__pycache__
-week7
-aws-blog-emr-jupyter
-.ipynb_checkpoints
+results/
+.ipynb_checkpoints/
 tutorial.md
 specifications.json
-configure_aws_gpu_instance.py
-MNIST_data
-data
 specification.json
-conv_nets
+MNIST_data/
+data/
