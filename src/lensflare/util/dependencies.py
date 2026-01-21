@@ -1,7 +1,8 @@
 import importlib
-import pkg_resources
 import re
-from distutils.version import LooseVersion
+
+from importlib.metadata import distribution, PackageNotFoundError
+from packaging.version import Version
 
 SUBPATTERN = r'((?P<operation%d>==|>=|>|<)(?P<version%d>(\d+)?(\.[a-zA-Z0-9]+)?(\.\d+)?))'
 RE_PATTERN = re.compile(
@@ -31,19 +32,19 @@ def verify_packages(packages):
 
 def _verify_package(name, operation, version):
     try:
-        module = pkg_resources.get_distribution(name)
-        installed_version = LooseVersion(module.version)
-    except pkg_resources.DistributionNotFound:
+        dist = distribution(name)
+        installed_version = Version(dist.version)
+    except PackageNotFoundError:
         try:
             module = importlib.import_module(name)
-            installed_version = LooseVersion(module.__version__)
+            installed_version = Version(module.__version__)
         except ImportError:
             raise MissingPackageError(name)
 
     if not operation:
         return
 
-    required_version = LooseVersion(version)
+    required_version = Version(version)
 
 
     if operation == '==':
