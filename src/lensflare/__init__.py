@@ -13,10 +13,10 @@ import sys
 from .__version__ import __version__
 
 # Check Python version
-if sys.version_info < (3, 10):
+if sys.version_info < (3, 12):
     raise ValueError(
         f'Unsupported Python version {sys.version_info.major}.{sys.version_info.minor}. '
-        'LensFlare requires Python 3.10 or higher.'
+        'LensFlare requires Python 3.12 or higher.'
     )
 
 # Public API
