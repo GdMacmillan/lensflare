@@ -19,16 +19,32 @@ if sys.version_info < (3, 12):
         'LensFlare requires Python 3.12 or higher.'
     )
 
-# Public API
-from .classification import TfNNClassifier, NpNNClassifier
+# Public API - NumPy components (always available)
+from .neural_network import NpNNClassifier
 from .util import load_moons_dataset, random_mini_batches
-from .neural_network import (
-    check_gpu_available,
-    configure_gpu_memory_growth,
-    BinaryClassifierNN,
-    DenseLayer,
+
+# Lazy imports for TensorFlow components
+_TF_EXPORTS = (
+    'TfNNClassifier',
+    'check_gpu_available',
+    'configure_gpu_memory_growth',
+    'BinaryClassifierNN',
+    'DenseLayer',
+    'plot_decision_boundary',
 )
-from .funcs import plot_decision_boundary
+
+def __getattr__(name):
+    if name in _TF_EXPORTS:
+        if name == 'TfNNClassifier':
+            from .neural_network import TfNNClassifier
+            return TfNNClassifier
+        elif name == 'plot_decision_boundary':
+            from .funcs import plot_decision_boundary
+            return plot_decision_boundary
+        else:
+            from . import neural_network
+            return getattr(neural_network, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     '__version__',

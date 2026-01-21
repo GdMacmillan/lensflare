@@ -24,11 +24,12 @@ from .np_funcs import (
     optimize,
 )
 
-from .tf_funcs import (
-    plot_decision_boundary,
-    predict_with_model,
-    compute_binary_accuracy,
-)
+# Lazy import for TensorFlow functions to avoid import errors when TF not configured
+def __getattr__(name):
+    if name in ('plot_decision_boundary', 'predict_with_model', 'compute_binary_accuracy'):
+        from . import tf_funcs
+        return getattr(tf_funcs, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     # NumPy functions
@@ -52,7 +53,7 @@ __all__ = [
     'predict',
     'predict_dec',
     'optimize',
-    # TensorFlow utility functions
+    # TensorFlow utility functions (lazy loaded)
     'plot_decision_boundary',
     'np_plot_decision_boundary',
     'predict_with_model',
