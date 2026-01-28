@@ -1,3 +1,4 @@
+![LensFlare Banner](https://raw.githubusercontent.com/GdMacmillan/lensflare/master/readme_files/lensflare_banner.png)
 
 # LensFlare
 
@@ -31,7 +32,7 @@ check_gpu_available()
 X_train, y_train = load_moons_dataset(n_samples=300, noise=0.2, seed=42, plot=True)
 ```
 
-![png](readme_files/plot_data.png)
+![png](https://raw.githubusercontent.com/GdMacmillan/lensflare/master/readme_files/plot_data.png)
 
 ```python
 # Define network architecture: 2 inputs -> 64 -> 32 -> 16 -> 1 output
@@ -65,7 +66,7 @@ y_pred_train = clf.transform(X_train, y_train)
 plot_decision_boundary(clf, X_train, y_train)
 ```
 
-![png](readme_files/decision_boundary.png)
+![png](https://raw.githubusercontent.com/GdMacmillan/lensflare/master/readme_files/decision_boundary.png)
 
 ## NumPy Implementation
 
