@@ -56,10 +56,11 @@ clf.fit(X_train, y_train, seed=1)
 y_pred_train = clf.transform(X_train, y_train)
 ```
 
-    Cost after epoch 0: 0.693147
-    Cost after epoch 100: 0.341821
-    ...
-    Training Accuracy: 98.00%
+    TensorFlow GPU devices available: 1
+      - /physical_device:GPU:0
+    Cost after epoch 0: 1.199636
+    Cost after epoch 1000: 0.178848
+    Training Accuracy: 0.96
 
 ```python
 # Plot decision boundary
