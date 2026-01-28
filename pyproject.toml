@@ -46,6 +46,11 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/lensflare"]
 
+[tool.uv]
+constraint-dependencies = [
+    "wheel>=0.46.2",  # CVE-2026-24049: path traversal in wheel unpack
+]
+
 [tool.ruff]
 line-length = 100
 target-version = "py310"
