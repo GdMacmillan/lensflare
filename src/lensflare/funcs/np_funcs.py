@@ -2,6 +2,8 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
+from ..util import random_mini_batches
+
 
 def sigmoid(Z):
     """
@@ -298,8 +300,10 @@ def compute_cost(AL, Y, parameters, lambd):
 
     L = len(parameters) // 2
     m = Y.shape[1]
-    # cross entropy cost
-    logprobs = np.multiply(-np.log(AL), Y) + np.multiply(-np.log(1 - AL), 1 - Y)
+    # cross entropy cost (clip AL for numerical stability)
+    epsilon = 1e-8
+    AL_clipped = np.clip(AL, epsilon, 1 - epsilon)
+    logprobs = np.multiply(-np.log(AL_clipped), Y) + np.multiply(-np.log(1 - AL_clipped), 1 - Y)
     cost = 1. / m * np.sum(logprobs)
 
     if lambd:
@@ -399,8 +403,10 @@ def backward_propagation(AL, Y, caches, lambd, keep_prob):
     m = AL.shape[1]
     Y = Y.reshape(AL.shape) # after this line, Y is the same shape as AL
 
-    # Initializing the backpropagation
-    dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
+    # Initializing the backpropagation (clip AL for numerical stability)
+    epsilon = 1e-8
+    AL_clipped = np.clip(AL, epsilon, 1 - epsilon)
+    dAL = - (np.divide(Y, AL_clipped) - np.divide(1 - Y, 1 - AL_clipped))
 
     # Lth layer (SIGMOID -> LINEAR) gradients.
     current_cache = caches[L - 1]

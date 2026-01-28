@@ -15,17 +15,85 @@ import matplotlib.pyplot as plt
 from ..util import random_mini_batches
 
 
-def check_gpu_available():
-    """Check if GPU (including Apple Metal) is available for TensorFlow."""
+def _is_apple_silicon():
+    """Check if running on Apple Silicon."""
+    import platform
+    return platform.system() == "Darwin" and platform.machine() == "arm64"
+
+
+def _is_metal_installed():
+    """Check if tensorflow-metal is installed."""
+    import importlib.util
+    return importlib.util.find_spec("tensorflow_metal") is not None
+
+
+def _install_tensorflow_metal():
+    """Install tensorflow-metal plugin for Apple Silicon GPU support."""
+    import subprocess
+    import sys
+
+    print("Installing tensorflow-metal for Apple Silicon GPU support...")
+    try:
+        # Try uv first (faster), fall back to pip
+        result = subprocess.run(
+            ["uv", "pip", "install", "tensorflow-metal"],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode != 0:
+            # Fall back to pip
+            subprocess.run(
+                [sys.executable, "-m", "pip", "install", "tensorflow-metal"],
+                check=True,
+                capture_output=True
+            )
+        print("tensorflow-metal installed successfully.")
+        print("NOTE: Restart your Python kernel/session to enable Metal GPU.")
+        return True
+    except Exception as e:
+        print(f"Failed to install tensorflow-metal: {e}")
+        print("  Manual install: pip install tensorflow-metal")
+        return False
+
+
+def check_gpu_available(auto_install_metal=True):
+    """Check if GPU (including Apple Metal) is available for TensorFlow.
+
+    Parameters
+    ----------
+    auto_install_metal : bool, default=True
+        If True and running on Apple Silicon without tensorflow-metal,
+        automatically install the Metal plugin.
+
+    Returns
+    -------
+    bool
+        True if GPU is available, False otherwise.
+    """
     gpus = tf.config.list_physical_devices('GPU')
     if gpus:
         print(f"TensorFlow GPU devices available: {len(gpus)}")
         for gpu in gpus:
             print(f"  - {gpu.name}")
         return True
+
+    # Check if we're on Apple Silicon without tensorflow-metal
+    if _is_apple_silicon():
+        if not _is_metal_installed():
+            print("No GPU available. Running on CPU.")
+            print("  Apple Silicon detected - Metal GPU acceleration available.")
+            if auto_install_metal:
+                _install_tensorflow_metal()
+            else:
+                print("  Install tensorflow-metal for GPU acceleration:")
+                print("    pip install tensorflow-metal")
+        else:
+            print("No GPU available. Running on CPU.")
+            print("  tensorflow-metal is installed but GPU not detected.")
+            print("  Restart your Python kernel/session to enable Metal GPU.")
     else:
         print("No GPU available. Running on CPU.")
-        return False
+    return False
 
 
 def configure_gpu_memory_growth():
